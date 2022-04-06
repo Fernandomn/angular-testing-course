@@ -38,4 +38,41 @@ describe("CoursesService", () => {
 
     req.flush({ payload: Object.values(COURSES) });
   });
+
+  it("should find a course by id", () => {
+    const courseId = 12;
+
+    coursesService.findCourseById(courseId).subscribe((course) => {
+      expect(course).toBeTruthy();
+      expect(course.id).toBe(courseId);
+    });
+
+    const req = httpTestingController.expectOne(`/api/courses/${courseId}`);
+
+    expect(req.request.method).toEqual("GET");
+
+    req.flush(COURSES[courseId]);
+  });
+
+  it("should save the course data", () => {
+    const courseId = 12;
+    const testingData = { titles: { description: "Testing" } };
+
+    coursesService.saveCourse(courseId, testingData).subscribe((course) => {
+      expect(course.id).toBe(12);
+    });
+
+    const req = httpTestingController.expectOne(`/api/courses/${courseId}`);
+
+    expect(req.request.method).toEqual("PUT");
+    expect(req.request.body.titles.description).toEqual(
+      testingData.titles.description
+    );
+
+    req.flush({ ...COURSES[courseId], ...testingData });
+  });
+
+  afterEach(() => {
+    httpTestingController.verify();
+  });
 });
