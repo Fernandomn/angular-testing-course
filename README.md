@@ -1,5 +1,5 @@
 # NOTE:
-This is the the modified (by me) files from the Reactive Angular Course, from Angular University, available on Udemy. The major part of the setup is provided by the courses. All rights from the original files are reserved to the owners.
+This is the modified (by me) files from the Reactive Angular Course, from Angular University, available on Udemy. The major part of the setup is provided by the courses. All rights from the original files are reserved to the owners.
 Below this line, is the original README file:
 
 ___
