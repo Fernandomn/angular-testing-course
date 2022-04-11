@@ -4,6 +4,7 @@ import {
   HttpTestingController,
 } from "@angular/common/http/testing";
 import { TestBed } from "@angular/core/testing";
+import { Course } from "../model/course";
 import { COURSES, findLessonsForCourse } from "./../../../../server/db-data";
 import { CoursesService } from "./courses.service";
 
@@ -59,7 +60,7 @@ describe("CoursesService", () => {
   });
 
   it("should save the course data", () => {
-    const testingData = { titles: { description: "Testing" } };
+    const testingData: Partial<Course> = { titles: { description: "Testing" } };
 
     coursesService.saveCourse(courseId, testingData).subscribe((course) => {
       expect(course.id).toBe(courseId);
