@@ -11,7 +11,7 @@ import { CoursesService } from "./courses.service";
 describe("CoursesService", () => {
   let coursesService: CoursesService;
   let httpTestingController: HttpTestingController;
-  let courseId: number;
+  let defaultCourseId: number = 12;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -23,10 +23,6 @@ describe("CoursesService", () => {
     httpTestingController = TestBed.inject<HttpTestingController>(
       HttpTestingController
     );
-  });
-
-  beforeEach(() => {
-    courseId = 12;
   });
 
   it("should retrieve all courses", () => {
@@ -47,46 +43,54 @@ describe("CoursesService", () => {
   });
 
   it("should find a course by id", () => {
-    coursesService.findCourseById(courseId).subscribe((course) => {
+    coursesService.findCourseById(defaultCourseId).subscribe((course) => {
       expect(course).toBeTruthy();
-      expect(course.id).toBe(courseId);
+      expect(course.id).toBe(defaultCourseId);
     });
 
-    const req = httpTestingController.expectOne(`/api/courses/${courseId}`);
+    const req = httpTestingController.expectOne(
+      `/api/courses/${defaultCourseId}`
+    );
 
     expect(req.request.method).toEqual("GET");
 
-    req.flush(COURSES[courseId]);
+    req.flush(COURSES[defaultCourseId]);
   });
 
   it("should save the course data", () => {
     const testingData: Partial<Course> = { titles: { description: "Testing" } };
 
-    coursesService.saveCourse(courseId, testingData).subscribe((course) => {
-      expect(course.id).toBe(courseId);
-    });
+    coursesService
+      .saveCourse(defaultCourseId, testingData)
+      .subscribe((course) => {
+        expect(course.id).toBe(defaultCourseId);
+      });
 
-    const req = httpTestingController.expectOne(`/api/courses/${courseId}`);
+    const req = httpTestingController.expectOne(
+      `/api/courses/${defaultCourseId}`
+    );
 
     expect(req.request.method).toEqual("PUT");
     expect(req.request.body.titles.description).toEqual(
       testingData.titles.description
     );
 
-    req.flush({ ...COURSES[courseId], ...testingData });
+    req.flush({ ...COURSES[defaultCourseId], ...testingData });
   });
 
   it("should give an error if save course fails", () => {
     const testingData = { titles: { description: "Testing" } };
 
-    coursesService.saveCourse(courseId, testingData).subscribe(
+    coursesService.saveCourse(defaultCourseId, testingData).subscribe(
       () => fail("the fail course operation should have failed"),
       (error: HttpErrorResponse) => {
         expect(error.status).toBe(500);
       }
     );
 
-    const req = httpTestingController.expectOne(`/api/courses/${courseId}`);
+    const req = httpTestingController.expectOne(
+      `/api/courses/${defaultCourseId}`
+    );
     expect(req.request.method).toEqual("PUT");
 
     req.flush("save course failed", {
@@ -96,7 +100,7 @@ describe("CoursesService", () => {
   });
 
   it("should find a list of lessons", () => {
-    coursesService.findLessons(courseId).subscribe((lessons) => {
+    coursesService.findLessons(defaultCourseId).subscribe((lessons) => {
       expect(lessons).toBeTruthy();
       expect(lessons.length).toBe(3);
     });
@@ -106,13 +110,13 @@ describe("CoursesService", () => {
     );
 
     expect(req.request.method).toEqual("GET");
-    expect(req.request.params.get("courseId")).toEqual(`${courseId}`);
+    expect(req.request.params.get("courseId")).toEqual(`${defaultCourseId}`);
     expect(req.request.params.get("filter")).toEqual("");
     expect(req.request.params.get("sortOrder")).toEqual("asc");
     expect(req.request.params.get("pageNumber")).toEqual("0");
     expect(req.request.params.get("pageSize")).toEqual("3");
 
-    req.flush({ payload: findLessonsForCourse(courseId).slice(0, 3) });
+    req.flush({ payload: findLessonsForCourse(defaultCourseId).slice(0, 3) });
   });
 
   afterEach(() => {
